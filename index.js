@@ -33,6 +33,17 @@ async function run(){
             const result = await dentistCollection.findOne(query)
             res.send(result)
         })
+
+        //limit data loaded
+        app.get('/limited', async(req, res)=>{
+            const query = {}
+            const cursor = dentistCollection.find(query).limit(3)
+            const service = await cursor.toArray()
+            res.send(service)
+        })
+
+
+
     }
     finally{
 
