@@ -16,6 +16,7 @@ console.log(uri);
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
 const dentistCollection =  client.db('dentist').collection('service');
+const reviewCollection = client.db('dentist').collection('reviews')
 
 async function run(){
     try{
@@ -39,7 +40,14 @@ async function run(){
             const query = {}
             const cursor = dentistCollection.find(query).limit(3)
             const service = await cursor.toArray()
-            res.send(service)
+            res.send(serviceexjs)
+        })
+
+        //post data
+        app.post('/reviews', async(req, res)=>{
+            const review = req.body
+            const result = await reviewCollection.insertOne(review)
+            res.send(result) 
         })
 
 
