@@ -1,5 +1,6 @@
 const express = require('express')
 const cors = require('cors')
+const jwt = require('jsonwebtoken');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config();
 const app = express()
@@ -17,6 +18,31 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 
 const dentistCollection =  client.db('dentist').collection('service');
 const reviewCollection = client.db('dentist').collection('reviews')
+
+//jwt token create
+app.post('/jwt', (req, res)=>{
+    const user = req.body
+    const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRECT, {expiresIn: '1d'})
+    res.send({token})
+})
+
+function verifyJWT(req, res, next){
+    const authheader = req.headers.authorization;
+   
+    if(!authheader){
+       return  res.status(401).send({message: 'unauthorized access'})
+    }
+    const token = authheader.split(' ')[1]
+    console.log(token);
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRECT, function(err, decoded){
+        if(err){
+           return res.send(401).send({message: 'unathorized access'})
+        }
+        req.decoded = decoded;
+        next()
+    })
+}
+
 
 async function run(){
     try{
@@ -56,7 +82,7 @@ async function run(){
             res.send(result) 
         })
 
-        app.get('/reviews', async(req, res)=>{
+        app.get('/reviews', verifyJWT,async(req, res)=>{
             let query = {}
             if(req.query.email){
                query = {
