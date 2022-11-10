@@ -35,6 +35,12 @@ async function run(){
             res.send(result)
         })
 
+        app.post('/services', async(req, res)=>{
+            const service = req.body
+            const result = await dentistCollection.insertOne(service)
+            res.send(result)
+        })
+
         //limit data loaded
         app.get('/limited', async(req, res)=>{
             const query = {}
@@ -82,8 +88,7 @@ async function run(){
                 }
             }
             const result = await reviewCollection.updateOne(query, updatedoc)
-            console.log(result);
-            // res.send(result)
+            res.send(result)
         })
 
         //delete data
@@ -101,7 +106,6 @@ async function run(){
             const result = await reviewCollection.findOne(query)
             res.send(result) 
         })
-
 
 
     }
