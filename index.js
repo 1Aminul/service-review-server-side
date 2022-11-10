@@ -40,7 +40,7 @@ async function run(){
             const query = {}
             const cursor = dentistCollection.find(query).limit(3)
             const service = await cursor.toArray()
-            res.send(serviceexjs)
+            res.send(service)
         })
 
         //post data
@@ -50,11 +50,26 @@ async function run(){
             res.send(result) 
         })
 
-        app.get('/reviews/', async(req, res)=>{
-            const query = {}
+        app.get('/reviews', async(req, res)=>{
+            let query = {}
+            if(req.query.email){
+               query = {
+                    email: req.query.email
+                }
+            }
             const cursor = reviewCollection.find(query)
             const reviews = await cursor.toArray()
             res.send(reviews)
+        })
+
+        //get data by query
+        app.get('/reviews', async(req, res)=>{
+           
+            const query = {}
+            const cursor = reviewCollection.find(query)
+            const reviews = await cursor.toArray()
+            res.send(reviews) 
+            
         })
 
 
